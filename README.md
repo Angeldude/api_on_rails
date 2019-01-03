@@ -2,7 +2,7 @@
 
 Update & translation of the [API on Rails (EN)](http://apionrails.icalialabs.com/book) book.
 
-Traduction française  et MàJ de l'excellent livre [API on Rails (EN)](http://apionrails.icalialabs.com/book) 
+Traduction française  et MàJ de l'excellent livre [API on Rails (EN)](http://apionrails.icalialabs.com/book)
 
 <noscript><a href="https://liberapay.com/alexandre_rousseau/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
 
@@ -14,10 +14,12 @@ You should install all dependencies. This example with a Debian Linux distributi
 $ sudo apt install tex-common texlive-lang-french texlive-latex-recommended texlive-latex-extra texlive-publishers latexmk
 ~~~
 
-There are so many way to build a PDF from LaTeX but this is a common using [`latexmk`](https://mg.readthedocs.io/latexmk.html)
+Also you need to install [Pygments](http://pygments.org/) to install
+
+There are so many way to build a PDF from LaTeX but this is a common using `pdflatex`
 
 ~~~bash
-$ latexmk -pdf
+$ pdflatex --shell-escape api-on-rails.tex
 ~~~
 
 ## License

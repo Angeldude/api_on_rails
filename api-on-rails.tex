@@ -8,6 +8,7 @@
 \usepackage{csquotes}
 \usepackage{tcolorbox}
 \usepackage{listings}
+\usepackage[chapter]{minted}
 \usepackage{lstautogobble}
 \usepackage{color}
 \usepackage{xcolor}
@@ -33,6 +34,7 @@
   % captionpos=b, % sets the caption-position to bottom
   frame=single, % adds a frame around the code
   showtabs=false, % show tabs within strings adding particular underscores
+  showspaces=false, % show spaces everywhere adding particular underscores
   tabsize=2, % sets default tabsize to 2 spaces
   rulecolor = \color{codeborder},
   keywordstyle=\bfseries\color{purple!40!black},
@@ -41,6 +43,14 @@
   % numberstyle=\tiny\color{green},
   stringstyle=\color{blue!40!black},
 }
+
+% \usemintedstyle{autogobble, breaklines}
+\newminted{ruby}{autogobble, breaklines, breakanywhere, frame=single, rulecolor=\color{gray}}
+\newminted{bash}{autogobble, breaklines, breakanywhere, frame=single, rulecolor=\color{gray}}
+\newminted{json}{autogobble, breaklines, breakanywhere, frame=single, rulecolor=\color{gray}}
+\usemintedstyle{pastie}
+% \usemintedstyle{breaklines}
+
 
 \begin{document}
 
@@ -6090,52 +6100,42 @@
 
   Maintenant que tout est clair, on peut mettre les mains dans le cambouis. Vous pouvez cloner le projet jusqu'à ce point avec:
 
-  \begin{scriptsize}
-    \begin{lstlisting}[language=bash]
-    $ git clone https://github.com/madeindjs/market_place_api.git -b chapter8
-    \end{lstlisting}
-  \end{scriptsize}
+  \begin{bashcode}
+  git clone https://github.com/madeindjs/market_place_api.git -b chapter8
+  \end{bashcode}
 
   Créons une branche pour commencer
 
-  \begin{scriptsize}
-    \begin{lstlisting}[language=bash]
-    $ git checkout -b chapter9
-    \end{lstlisting}
-  \end{scriptsize}
+  \begin{bashcode}
+  git checkout -b chapter9
+  \end{bashcode}
 
   \section{Diminution de la quantité de produit}
 
     Dans cette partie nous travaillerons sur la mise à jour de la quantité du produit pour nous assurer que chaque commande livrera le produit réel. Actuellement, le modèle de produit n'a pas d'attribut de quantité, alors faisons-le:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ rails generate migration add_quantity_to_products quantity:integer
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    rails generate migration add_quantity_to_products quantity:integer
+    \end{bashcode}
 
     Attendez! N'exécutez pas encore cette migrations! Nous allons y apporter une petite modification. Comme bonne pratique, j'aime ajouter des valeurs par défaut pour la base de données juste pour être sûr de ne pas tout gâcher avec des valeurs nulles. C'est un cas parfait!
 
     Votre fichier de migration devrait ressembler à ceci:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
-      # db/migrate/20181227092237_add_quantity_to_products.rb
-      class AddQuantityToProducts < ActiveRecord::Migration[5.2]
-        def change
-          add_column :products, :quantity, :integer, default: 0
-        end
+    \begin{rubycode}
+    # db/migrate/20181227092237_add_quantity_to_products.rb
+    class AddQuantityToProducts < ActiveRecord::Migration[5.2]
+      def change
+        add_column :products, :quantity, :integer, default: 0
       end
-      \end{lstlisting}
-    \end{scriptsize}
+    end
+    \end{rubycode}
 
     Maintenant nous pouvons lancer la migration:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ rake db:migrate
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    rake db:migrate
+    \end{bashcode}
 
     Il est maintenant temps de diminuer la quantité du \verb|Product| une fois l' \verb|Order| passée. La première chose qui vous vient probablement à l'esprit est de le faire dans le modèle \verb|Order| et c'est une erreur fréquente. Lorsque vous travaillez avec des associations \textit{Many-to-Many}, nous oublions totalement le modèle de jointure qui dans ce cas est \verb|Placement|. Le \verb|Placement| est un meilleur endroit pour gérer cela car nous avons accès à la commande et au produit. Ainsi, nous pouvons facilement diminuer le stock du produit.
 
@@ -6143,210 +6143,187 @@
 
     Un exemple rapide serait quelque chose comme cela:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
-      product_ids_and_quantities = [
-        [1,4],
-        [3,5]
-      ]
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{rubycode}
+    product_ids_and_quantities = [
+      [1,4],
+      [3,5]
+    ]
+    \end{rubycode}
 
     Ça va être difficile, alors restez avec moi. Construisons d'abord des tests unitaires:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
-      # spec/models/order_spec.rb
-      require 'rails_helper'
+    \begin{rubycode}
+    # spec/models/order_spec.rb
+    require 'rails_helper'
 
-      RSpec.describe Order, type: :model do
-        # ...
+    RSpec.describe Order, type: :model do
+      # ...
 
-        describe '#build_placements_with_product_ids_and_quantities' do
-          before(:each) do
-            product_1 = FactoryBot.create :product, price: 100, quantity: 5
-            product_2 = FactoryBot.create :product, price: 85, quantity: 10
+      describe '#build_placements_with_product_ids_and_quantities' do
+        before(:each) do
+          product_1 = FactoryBot.create :product, price: 100, quantity: 5
+          product_2 = FactoryBot.create :product, price: 85, quantity: 10
 
-            @product_ids_and_quantities = [[product_1.id, 2], [product_2.id, 3]]
-          end
+          @product_ids_and_quantities = [[product_1.id, 2], [product_2.id, 3]]
+        end
 
-          it 'builds 2 placements for the order' do
-            expect { order.build_placements_with_product_ids_and_quantities(@product_ids_and_quantities) }.to change { order.placements.size }.from(0).to(2)
-          end
+        it 'builds 2 placements for the order' do
+          expect { order.build_placements_with_product_ids_and_quantities(@product_ids_and_quantities) }.to change { order.placements.size }.from(0).to(2)
         end
       end
-      \end{lstlisting}
-    \end{scriptsize}
+    end
+    \end{rubycode}
 
     Et maintenant l'implémentation
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
-      # app/models/order.rb
-      class Order < ApplicationRecord
-        # ...
+    \begin{rubycode}
+    # app/models/order.rb
+    class Order < ApplicationRecord
+      # ...
 
-        # @param product_ids_and_quantities [Array] something like this
-        #        `[[product_1.id, 2], [product_2.id, 3]]`. Where first item is
-        #        `product_id` and the second is the quantity
-        # @yield [Placement] placement build
-        def build_placements_with_product_ids_and_quantities(product_ids_and_quantities)
-          product_ids_and_quantities.each do |product_id_and_quantity|
-            id, quantity = product_id_and_quantity # [1,5]
-            placement = placements.build(product_id: id)
-            yield placement if block_given?
-          end
+      # @param product_ids_and_quantities [Array] something like this
+      #        `[[product_1.id, 2], [product_2.id, 3]]`. Where first item is
+      #        `product_id` and the second is the quantity
+      # @yield [Placement] placement build
+      def build_placements_with_product_ids_and_quantities(product_ids_and_quantities)
+        product_ids_and_quantities.each do |product_id_and_quantity|
+          id, quantity = product_id_and_quantity # [1,5]
+          placement = placements.build(product_id: id)
+          yield placement if block_given?
         end
       end
-      \end{lstlisting}
-    \end{scriptsize}
+    end
+    \end{rubycode}
 
     Et maintenant, si nous lançons les tests, ils devraient passer:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
-      $ rspec spec/models/order_spec.rb
-      ........
+    \begin{bashcode}
+    rspec spec/models/order_spec.rb
+    ........
 
-      Finished in 0.33759 seconds (files took 3.54 seconds to load)
-      8 examples, 0 failures
-      \end{lstlisting}
-    \end{scriptsize}
+    Finished in 0.33759 seconds (files took 3.54 seconds to load)
+    8 examples, 0 failures
+    \end{bashcode}
 
     Les \verb|build_placements_with_product_ids_and_quantities| construiront les objets \verb|Placement| et une fois que nous déclencherons la méthode de sauvegarde de l'ordre, tout sera inséré dans la base de données. Une dernière étape avant de valider ceci est de mettre à jour \verb|orders_controller_spec| avec son implémentation.
 
     Tout d'abord, nous mettons à jour le fichier \verb|orders_controller_spec|:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
-      # spec/controllers/api/v1/orders_controller_spec.rb
-      require 'rails_helper'
+    \begin{rubycode}
+    # spec/controllers/api/v1/orders_controller_spec.rb
+    require 'rails_helper'
 
-      RSpec.describe Api::V1::OrdersController, type: :controller do
-        # ...
+    RSpec.describe Api::V1::OrdersController, type: :controller do
+      # ...
 
-        describe 'POST #create' do
-          before(:each) do
-            current_user = FactoryBot.create :user
-            api_authorization_header current_user.auth_token
+      describe 'POST #create' do
+        before(:each) do
+          current_user = FactoryBot.create :user
+          api_authorization_header current_user.auth_token
 
-            product_1 = FactoryBot.create :product
-            product_2 = FactoryBot.create :product
-            order_params = {
-              product_ids_and_quantities: [[product_1.id, 2], [product_2.id, 3]]
-            }
-            post :create, params: { user_id: current_user.id, order: order_params }
-          end
-
-          it 'embeds the two product objects related to the order' do
-            expect(json_response[:products].size).to eql 2
-          end
-
-          # ...
+          product_1 = FactoryBot.create :product
+          product_2 = FactoryBot.create :product
+          order_params = {
+            product_ids_and_quantities: [[product_1.id, 2], [product_2.id, 3]]
+          }
+          post :create, params: { user_id: current_user.id, order: order_params }
         end
+
+        it 'embeds the two product objects related to the order' do
+          expect(json_response[:products].size).to eql 2
+        end
+
+        # ...
       end
-      \end{lstlisting}
-    \end{scriptsize}
+    end
+    \end{rubycode}
 
     Nous devons ensuite mettre un peu à jour notre contrôleur des commandes:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
-      # app/controllers/api/v1/orders_controller.rb
-      class Api::V1::OrdersController < ApplicationController
-        # ...
+    \begin{rubycode}
+    # app/controllers/api/v1/orders_controller.rb
+    class Api::V1::OrdersController < ApplicationController
+      # ...
 
-        def create
-          order = Order.create! user: current_user
-          order.build_placements_with_product_ids_and_quantities(params[:order][:product_ids_and_quantities])
+      def create
+        order = Order.create! user: current_user
+        order.build_placements_with_product_ids_and_quantities(params[:order][:product_ids_and_quantities])
 
-          if order.save
-            order.reload # need to reload associations
-            OrderMailer.send_confirmation(order).deliver
-            render json: order, status: 201, location: [:api, current_user, order]
-          else
-            render json: { errors: order.errors }, status: 422
-          end
+        if order.save
+          order.reload # need to reload associations
+          OrderMailer.send_confirmation(order).deliver
+          render json: order, status: 201, location: [:api, current_user, order]
+        else
+          render json: { errors: order.errors }, status: 422
         end
       end
-      \end{lstlisting}
-    \end{scriptsize}
+    end
+    \end{rubycode}
 
     Notez que j'ai aussi supprimé la méthode \verb|OrdersController#order_params| qui devient inutile.
 
     Enfin et surtout, nous devons mettre à jour le fichier d'usine des produits afin d'attribuer une valeur de quantité élevée pour avoir au moins quelques produits en stock.
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
-      # spec/factories/products.rb
-      FactoryBot.define do
-        factory :product do
-          title { FFaker::Product.product_name }
-          price { rand * 100 }
-          published { false }
-          user
-          quantity { 5 }
-        end
+    \begin{rubycode}
+    # spec/factories/products.rb
+    FactoryBot.define do
+      factory :product do
+        title { FFaker::Product.product_name }
+        price { rand * 100 }
+        published { false }
+        user
+        quantity { 5 }
       end
-      \end{lstlisting}
-    \end{scriptsize}
+    end
+    \end{rubycode}
 
     \textit{Commitons} nos changements avant d'aller plus loin:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ git add .
-      $ git commit -m "Allows the order to be placed along with product quantity"
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    git add . && git commit -m "Allows the order to be placed along with product quantity"
+    \end{bashcode}
 
     Avez-vous remarqué que nous ne mettons pas à jour la quantité des produits? Actuellement, il n'y a aucun moyen d'en faire le suivi. Cela peut être corrigé très facilement, en ajoutant simplement un attribut de quantité au modèle \verb|Placement| de sorte que pour chaque produit, nous sauvegardons la quantité correspondante. Commençons par créer la migration:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ rails generate migration add_quantity_to_placements quantity:integer
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    rails generate migration add_quantity_to_placements quantity:integer
+    \end{bashcode}
 
     Comme pour la migration des attributs de quantité de produit, nous devrions ajouter une valeur par défaut égale à 0. N'oubliez pas que c'est facultatif mais c'est mieux. Le fichier de migration devrait ressembler à cela:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
-      # db/migrate/20181227104830_add_quantity_to_placements.rb
-      class AddQuantityToPlacements < ActiveRecord::Migration[5.2]
-        def change
-          add_column :placements, :quantity, :integer, default: 0
-        end
+    \begin{rubycode}
+    # db/migrate/20181227104830_add_quantity_to_placements.rb
+    class AddQuantityToPlacements < ActiveRecord::Migration[5.2]
+      def change
+        add_column :placements, :quantity, :integer, default: 0
       end
-      \end{lstlisting}
-    \end{scriptsize}
+    end
+    \end{rubycode}
 
     Lancez ensuite la migration:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ rake db:migrate
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    rake db:migrate
+    \end{bashcode}
 
     Documentons l'attribut \verb|quantity| par un test unitaire:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
-      # spec/models/placement_spec.rb
+    \begin{rubycode}
+    # spec/models/placement_spec.rb
+    # ...
+    RSpec.describe Placement, type: :model do
       # ...
-      RSpec.describe Placement, type: :model do
-        # ...
-        it { should respond_to :quantity }
-        # ...
-      end
-      \end{lstlisting}
-    \end{scriptsize}
+      it { should respond_to :quantity }
+      # ...
+    end
+    \end{rubycode}
 
-    Il ne nous reste plus qu'à mettre à jour la méthode \verb|build_placements_with_product_ids_and_quantities| pour ajouter la quantité pour les placements:
+    Il ne nous reste plus qu'à mettre à jour la méthode \verb|build_placements_with_product_ids_and_quantities| pour ajouter la quantité pour les placements (Listing \ref{lst:build_placements_with_product_ids_and_quantities}):
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
+    \begin{listing}
+      \label{lst:build_placements_with_product_ids_and_quantities}
+      \caption{Mise à jour pour incrémenter la quantité des produits}
+      \begin{rubycode}
       # app/models/order.rb
       class Order < ApplicationRecord
         # ...
@@ -6358,29 +6335,24 @@
           end
         end
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
+    \end{listing}
 
     Maintenant, nos tests devraient passer:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ rspec spec/models/order_spec.rb
-      ........
+    \begin{bashcode}
+    rspec spec/models/order_spec.rb
+    ........
 
-      Finished in 0.09898 seconds (files took 0.74936 seconds to load)
-      8 examples, 0 failures
-      \end{lstlisting}
-    \end{scriptsize}
+    Finished in 0.09898 seconds (files took 0.74936 seconds to load)
+    8 examples, 0 failures
+    \end{bashcode}
 
     \textit{Commitons} nos changement:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ git add .
-      $ git commit -m "Adds quantity to placements"
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    git add . && git commit -m "Adds quantity to placements"
+    \end{bashcode}
 
     \subsection{Étendre le modèle de placement}
 
@@ -6388,23 +6360,25 @@
 
     Commençons par mettre à jour notre usine de placement pour qu'elle soit plus logique:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby, caption={Mise à jour de l'usine des placements}]
-      # spec/factories/placements.rb
-      FactoryBot.define do
-        factory :placement do
-          order
-          product
-          quantity { 1 }
+      \begin{listing}
+        \caption{Mise à jour de l'usine des placements}
+        \begin{rubycode}
+        # spec/factories/placements.rb
+        FactoryBot.define do
+          factory :placement do
+            order
+            product
+            quantity { 1 }
+          end
         end
-      end
-      \end{lstlisting}
-    \end{scriptsize}
+        \end{rubycode}
+      \end{listing}
 
     Et puis nous pouvons simplement ajouter quelques tests:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby, caption={Test de la mise à jour de la quantité des produits}]
+    \begin{listing}
+      \caption{Test de la mise à jour de la quantité des produits}
+      \begin{rubycode}
       # spec/models/placement_spec.rb
       # ...
 
@@ -6419,13 +6393,15 @@
           end
         end
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
+    \end{listing}
 
     La mise en œuvre est assez simple comme le montre le listing \ref{lst:placement_decrement_product_quantity}.
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby, caption={Implémentation de la mise à jour de la quantité des produits}, label={lst:placement_decrement_product_quantity}]
+    \begin{listing}
+      \caption{Implémentation de la mise à jour de la quantité des produits}
+      \label{lst:placement_decrement_product_quantity}
+      \begin{rubycode}
       # app/models/placement.rb
       class Placement < ApplicationRecord
         # ...
@@ -6435,8 +6411,8 @@
           product.decrement!(:quantity, quantity)
         end
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
+    \end{listing}
 
   \section{Validation du stock des produits}
 
@@ -6446,18 +6422,18 @@
 
     Tout d'abord, nous devons créer un répertoire de \verb|validators| dans le répertoire \verb|app| (Rails le charge par défaut) et ensuite créons un fichier dedans:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ mkdir app/validators
-      $ touch app/validators/enough_products_validator.rb
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    mkdir app/validators
+    touch app/validators/enough_products_validator.rb
+    \end{bashcode}
 
     Avant de commencer à implémenter la classe, nous devons nous assurer d'ajouter un test au modèle de commande pour vérifier si la commande peut être passée (Listing \ref{lst:order_valid_spec}).
 
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby, caption={Test de la validation de la commande}, label={lst:order_valid_spec}]
+    \begin{listing}
+      \caption{Test de la validation de la commande}
+      \label{lst:order_valid_spec}
+      \begin{rubycode}
       # spec/models/order_spec.rb
       require 'rails_helper'
 
@@ -6484,15 +6460,15 @@
           end
         end
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
+    \end{listing}
 
     Comme vous pouvez le voir sur les tests (Listing \ref{lst:order_valid_spec}), nous nous assurons d'abord que \verb|placement_2| essaie de demander plus de produits que ce qui est disponible. Donc dans ce cas la commande n'est pas supposée être valide.
 
     Le test est en train d'échouer. Faisons le passer en implémentant le code pour le validateur:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
+    \begin{listing}
+      \begin{rubycode}
       # app/validators/enough_products_validator.rb
       class EnoughProductsValidator < ActiveModel::Validator
         def validate(record)
@@ -6504,42 +6480,37 @@
           end
         end
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
+    \end{listing}
 
     J'ajoute simplement un message pour chacun des produits en rupture de stock, mais vous pouvez le gérer différemment si vous le souhaitez. Il ne nous reste plus qu'à ajouter ce validateur au modèle \verb|Order| comme cela:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
+    \begin{listing}
+      \begin{rubycode}
       # app/models/order.rb
       class Order < ApplicationRecord
         # ...
         validates_with EnoughProductsValidator
         # ...
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
+    \end{listing}
 
     Et maintenant, si vous lancer vos tests, tout devrait être beau et vert:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ rspec spec/models/order_spec.rb
-      .........
+    \begin{bashcode}
+    rspec spec/models/order_spec.rb
+    .........
 
-      Finished in 0.19136 seconds (files took 0.74912 seconds to load)
-      9 examples, 0 failures
-      \end{lstlisting}
-    \end{scriptsize}
+    Finished in 0.19136 seconds (files took 0.74912 seconds to load)
+    9 examples, 0 failures
+    \end{bashcode}
 
     \textit{Commitons} nos changements:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ git add .
-      $ git commit -m "Adds validator for order with not enough products on stock"
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    git add . && git commit -m "Adds validator for order with not enough products on stock"
+    \end{bashcode}
 
   \section{Mettre à jour le prix total}
 
@@ -6547,8 +6518,8 @@
 
     Actuellement, dans le modèle de commande, nous avons cette méthode pour calculer le montant à payer:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
+    \begin{listing}
+      \begin{rubycode}
       # app/models/order.rb
       class Order < ApplicationRecord
         # ...
@@ -6559,13 +6530,14 @@
 
         # ...
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
+    \end{listing}
 
     Maintenant, au lieu de calculer le total en additionnant simplement les prix des produits, nous devons le multiplier par la quantité. Alors mettons d'abord à jour les tests:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
+    \begin{listing}
+      \caption{Mise à jour des tests afin de vérifier le prix d'une commande}
+      \begin{rubycode}
       # spec/models/order_spec.rb
       require 'rails_helper'
 
@@ -6593,13 +6565,13 @@
 
         # ...
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
+    \end{listing}
 
     L'implémentation est assez simple:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
+    \begin{listing}
+      \begin{rubycode}
       # app/models/order.rb
       class Order < ApplicationRecord
         # ...
@@ -6613,28 +6585,24 @@
 
         # ...
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
+    \end{listing}
 
     Et maintenant, les tests devraient passer:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ rspec spec/models/order_spec.rb
-      .........
+    \begin{bashcode}
+    rspec spec/models/order_spec.rb
+    .........
 
-      Finished in 0.20537 seconds (files took 0.74555 seconds to load)
-      9 examples, 0 failures
-      \end{lstlisting}
-    \end{scriptsize}
+    Finished in 0.20537 seconds (files took 0.74555 seconds to load)
+    9 examples, 0 failures
+    \end{bashcode}
 
     \textit{Commitons} nos changements et récapitulons tout ce que nous venons de faire:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ git commit -am "Updates the total calculation for order"
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    git commit -am "Updates the total calculation for order"
+    \end{bashcode}
 
   \section{Conclusion}
 
@@ -6657,64 +6625,57 @@
 
   Si vous commencez à lire à ce stade, vous voudrez probablement que le code fonctionne, vous pouvez le cloner comme ça:
 
-  \begin{scriptsize}
-    \begin{lstlisting}[language=bash]
-    $ git clone https://github.com/madeindjs/market_place_api.git -b chapter9
-    \end{lstlisting}
-  \end{scriptsize}
+  \begin{bashcode}
+  git clone https://github.com/madeindjs/market_place_api.git -b chapter9
+  \end{bashcode}
 
-Créons une nouvelle branche pour ce chapitre:
+  Créons une nouvelle branche pour ce chapitre:
 
-\begin{scriptsize}
-  \begin{lstlisting}[language=bash]
-  $ git checkout -b chapter10
-  \end{lstlisting}
-\end{scriptsize}
+  \begin{bashcode}
+  git checkout -b chapter10
+  \end{bashcode}
 
-\section{Mise en place de la spécification \href{https://jsonapi.org/}{JSON:API}}
+  \section{Mise en place de la spécification \href{https://jsonapi.org/}{JSON:API}}
 
-Comme je vous le dis depuis le début de ce livre, une partie importante et difficile lors de la création de votre API est de décider le format de sortie. Heuresement, certaines organisations ont déjà fait face à ce genre de problème et elles ont ainsi établies certaines conventions.
+    Comme je vous le dis depuis le début de ce livre, une partie importante et difficile lors de la création de votre API est de décider le format de sortie. Heuresement, certaines organisations ont déjà fait face à ce genre de problème et elles ont ainsi établies certaines conventions.
 
-Une des convention les plus appliquée est très certainement \href{https://jsonapi.org/}{JSON:API}. JSON:API nous impose certaines règles à suivre comme:
+    Une des convention les plus appliquée est très certainement \href{https://jsonapi.org/}{JSON:API}. JSON:API nous impose certaines règles à suivre comme:
 
-\begin{itemize}
-  \item Comment formater la présentation de
-\end{itemize}
+    \begin{itemize}
+      \item Comment formater la présentation de
+    \end{itemize}
 
-Cette convention nous permettra d'aborder la pagination (section \ref{sec:pagination}) plus sereinement.
+    Cette convention nous permettra d'aborder la pagination (section \ref{sec:pagination}) plus sereinement.
 
 
-\section{Pagination}\label{sec:pagination}
+  \section{Pagination}\label{sec:pagination}
 
-  Une stratégie très commune pour optimiser la récupération d'enregistrements dans une base de données est de charger seulement une qunatité limité en les paginant. Si vous êtes familier avec cette technique, vous savez qu'avec Rails c'est vraiment très facile à mettre en place avec des gemmes telles que \href{https://github.com/mislav/will_paginate}{will\_paginate} ou \href{https://github.com/kaminari/kaminari}{kaminari}.
+    Une stratégie très commune pour optimiser la récupération d'enregistrements dans une base de données est de charger seulement une qunatité limité en les paginant. Si vous êtes familier avec cette technique, vous savez qu'avec Rails c'est vraiment très facile à mettre en place avec des gemmes telles que \href{https://github.com/mislav/will_paginate}{will\_paginate} ou \href{https://github.com/kaminari/kaminari}{kaminari}.
 
-  La seule partie délicate ici est de savoir comment gérer la sortie JSON pour donner assez d'informations au client sur la façon dont le tableau est paginé. Si vous vous souvenez du chapitre \ref{chapter:1}, j'ai partagé quelques ressources sur les pratiques que j'allais suivre ici. L'une d'entre elles était \url{http://jsonapi.org/} qui est une page incontournable des signets.
+    La seule partie délicate ici est de savoir comment gérer la sortie JSON pour donner assez d'informations au client sur la façon dont le tableau est paginé. Si vous vous souvenez du chapitre \ref{chapter:1}, j'ai partagé quelques ressources sur les pratiques que j'allais suivre ici. L'une d'entre elles était \url{http://jsonapi.org/} qui est une page incontournable des signets.
 
-  Si nous lisons la section sur le format, nous arriverons à une sous-section appelée \href{https://jsonapi.org/format/#document-top-level}{Top Level}. Pour vous expliquer rapidement, ils mentionnent quelque chose sur la pagination:
+    Si nous lisons la section sur le format, nous arriverons à une sous-section appelée \href{https://jsonapi.org/format/#document-top-level}{Top Level}. Pour vous expliquer rapidement, ils mentionnent quelque chose sur la pagination:
 
-  \enquote{"meta": méta-information sur une ressource, telle que la pagination.}
+    \enquote{"meta": méta-information sur une ressource, telle que la pagination.}
 
-  Ce n'est pas très descriptif mais au moins nous avons un indice sur ce qu'il faut regarder ensuite au sujet de l'implémentation de la pagination. Ne vous inquiétez pas, c'est exactement ce que nous allons faire ici.
+    Ce n'est pas très descriptif mais au moins nous avons un indice sur ce qu'il faut regarder ensuite au sujet de l'implémentation de la pagination. Ne vous inquiétez pas, c'est exactement ce que nous allons faire ici.
 
-  Commençons par la liste des produits.
+    Commençons par la liste des produits.
 
 
-  \subsection{Les produits}
+    \subsection{Les produits}
 
-    Nous allons commencer par paginer la liste des produits car nous n'avons aucune restriction d'accès. Cela nous facilitera les tests.
+      Nous allons commencer par paginer la liste des produits car nous n'avons aucune restriction d'accès. Cela nous facilitera les tests.
 
-    Nous devons d'abord ajouter la gemme de kaminari à notre \verb|Gemfile|:
+      Nous devons d'abord ajouter la gemme de kaminari à notre \verb|Gemfile|:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ bundle add kaminari
-      \end{lstlisting}
-    \end{scriptsize}
+      \begin{bashcode}
+      bundle add kaminari
+      \end{bashcode}
 
-    Maintenant nous pouvons aller à l'action \verb|Products#index| et ajouter les méthodes de pagination comme indiqué dans la documentation:
+      Maintenant nous pouvons aller à l'action \verb|Products#index| et ajouter les méthodes de pagination comme indiqué dans la documentation:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
+      \begin{rubycode}
       # app/controllers/api/v1/products_controller.rb
       class Api::V1::ProductsController < ApplicationController
         # ...
@@ -6725,15 +6686,13 @@ Cette convention nous permettra d'aborder la pagination (section \ref{sec:pagina
 
         # ...
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
 
-    Jusqu'à présent, la seule chose qui a changé est la requête sur la base de données pour limiter le résultat à 25 par page (ce qui est la valeur par défaut). Mais nous n'avons toujours pas ajouté d'informations supplémentaires à la sortie JSON.
+      Jusqu'à présent, la seule chose qui a changé est la requête sur la base de données pour limiter le résultat à 25 par page (ce qui est la valeur par défaut). Mais nous n'avons toujours pas ajouté d'informations supplémentaires à la sortie JSON.
 
-    Nous devons fournir les informations de pagination sur la balise meta dans le formulaire suivant:
+      Nous devons fournir les informations de pagination sur la balise meta dans le formulaire suivant:
 
-    \begin{scriptsize}
-      \begin{lstlisting}
+      \begin{jsoncode}
       "meta": {
           "pagination": {
               "per_page": 25,
@@ -6741,13 +6700,11 @@ Cette convention nous permettra d'aborder la pagination (section \ref{sec:pagina
               "total_objects": 11
           }
       }
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{jsoncode}
 
-    Maintenant que nous avons la structure finale de la balise meta, il ne nous reste plus qu'à la sortir sur la réponse JSON. Ajoutons d'abord quelques tests:
+      Maintenant que nous avons la structure finale de la balise meta, il ne nous reste plus qu'à la sortir sur la réponse JSON. Ajoutons d'abord quelques tests:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
+      \begin{rubycode}
       # spec/controllers/api/v1/products_controller_spec.rb
       require 'rails_helper'
 
@@ -6775,14 +6732,12 @@ Cette convention nous permettra d'aborder la pagination (section \ref{sec:pagina
 
         # ...
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
 
-    Le test que nous venons d'ajouter devrait échouer or, si nous executons les tests, deux tests échouent. Cela veux dire que nous avons cassé quelque chose d'autre:
+      Le test que nous venons d'ajouter devrait échouer or, si nous executons les tests, deux tests échouent. Cela veux dire que nous avons cassé quelque chose d'autre:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ bundle exec rspec spec/controllers/api/v1/products_controller_spec.rb
+      \begin{bashcode}
+      bundle exec rspec spec/controllers/api/v1/products_controller_spec.rb
       ...F....F...........
 
       Failures:
@@ -6800,13 +6755,11 @@ Cette convention nous permettra d'aborder la pagination (section \ref{sec:pagina
 
       Finished in 0.40801 seconds (files took 0.62979 seconds to load)
       20 examples, 2 failures
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{bashcode}
 
-    L'erreur est en fait sur la méthode \verb|Product.search|. En fait, Kaminari attend une relation d'enregistrement au lieu d'un tableau. C'est très facile à réparer:
+      L'erreur est en fait sur la méthode \verb|Product.search|. En fait, Kaminari attend une relation d'enregistrement au lieu d'un tableau. C'est très facile à réparer:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby]
+      \begin{rubycode}
       # app/models/product.rb
       class Product < ApplicationRecord
         # ...
@@ -6816,16 +6769,14 @@ Cette convention nous permettra d'aborder la pagination (section \ref{sec:pagina
           # ...
         end
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
 
-    Vous avez remarqué le changement? Laissez moi vous l'expliquer. Nous avons simplement remplacé la méthode \verb|Product.find| par \verb|Product.where| en utilisant les paramètres \verb|product_ids|. La différence est que la méthode \verb|where| retourne une  \verb|ActiveRecord::Relation| et c'est exactement ce dont nous avons besoin.
+      Vous avez remarqué le changement? Laissez moi vous l'expliquer. Nous avons simplement remplacé la méthode \verb|Product.find| par \verb|Product.where| en utilisant les paramètres \verb|product_ids|. La différence est que la méthode \verb|where| retourne une  \verb|ActiveRecord::Relation| et c'est exactement ce dont nous avons besoin.
 
-    Maintenant, si nous relançons les tests, le test que nous avions cassé devrait maintenant passer:
+      Maintenant, si nous relançons les tests, le test que nous avions cassé devrait maintenant passer:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ bundle exec rspec spec/controllers/api/v1/products_controller_spec.rb
+      \begin{bashcode}
+      bundle exec rspec spec/controllers/api/v1/products_controller_spec.rb
       ...F................
 
       Failures:
@@ -6835,12 +6786,11 @@ Cette convention nous permettra d'aborder la pagination (section \ref{sec:pagina
 
       Finished in 0.41533 seconds (files took 0.5997 seconds to load)
       20 examples, 1 failure
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{bashcode}
 
-    Maintenant que nous avons corrigé cela, ajoutons les informations de pagination. Nous devons le faire dans le fichier \verb|products_controller.rb|:
+      Maintenant que nous avons corrigé cela, ajoutons les informations de pagination. Nous devons le faire dans le fichier \verb|products_controller.rb|:
 
-    % https://www.simplify.ba/articles/2016/06/18/creating-rails5-api-only-application-following-jsonapi-specification/
+      % https://www.simplify.ba/articles/2016/06/18/creating-rails5-api-only-application-following-jsonapi-specification/
 
 
 
