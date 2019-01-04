@@ -45,9 +45,9 @@
 }
 
 % \usemintedstyle{autogobble, breaklines}
-\newminted{ruby}{autogobble, breaklines, breakanywhere, frame=single, rulecolor=\color{gray}}
-\newminted{bash}{autogobble, breaklines, breakanywhere, frame=single, rulecolor=\color{gray}}
-\newminted{json}{autogobble, breaklines, breakanywhere, frame=single, rulecolor=\color{gray}}
+\newminted{ruby}{autogobble, breaklines, breakanywhere, frame=single, rulecolor=\color{gray}, fontsize=\footnotesize}
+\newminted{bash}{autogobble, breaklines, breakanywhere, frame=single, rulecolor=\color{gray}, fontsize=\footnotesize}
+\newminted{json}{autogobble, breaklines, breakanywhere, frame=single, rulecolor=\color{gray}, fontsize=\footnotesize}
 \usemintedstyle{pastie}
 % \usemintedstyle{breaklines}
 
@@ -71,7 +71,7 @@
 
   \section{Droits d'auteur et licence}
 
-    Cette traduction est disponible sous \href{http://opensource.org/licenses/MIT}{licence MIT}. Tout le code source de ce livre est disponible au format \href{https://fr.wikipedia.org/wiki/LaTeX}{\LaTeX} sur \href{https://github.com/madeindjs/api_on_rails}{Github}
+    Cette traduction est disponible sous \href{http://opensource.org/licenses/MIT}{licence MIT}. Tout le code source de ce livre est disponible au format \href{https://fr.wikipedia.org/wiki/LaTeX}{\LaTeX} sur \href{https://github.com/madeindjs/api\_on\_rails}{Github}
 
     \begin{tcolorbox}{La licence MIT}
       Copyright (c) 2018 Alexandre Rousseau
@@ -83,7 +83,7 @@
       LE LOGICIEL EST FOURNI «TEL QUEL», SANS GARANTIE D’AUCUNE SORTE, EXPLICITE OU IMPLICITE, Y COMPRIS, MAIS SANS S’Y LIMITER, LES GARANTIES DE QUALITÉ MARCHANDE, ADAPTATION À UN USAGE PARTICULIER ET D’ABSENCE DE CONTREFAÇON. EN AUCUN CAS LES AUTEURS OU TITULAIRES DU ETRE TENU RESPONSABLE DE TOUT DOMMAGE, RÉCLAMATION OU AUTRES RESPONSABILITÉ, SOIT DANS UNE ACTION DE CONTRAT, UN TORT OU AUTRE, PROVENANT DE, DE OU EN RELATION AVEC LE LOGICIEL OU L’UTILISATION OU DE TRANSACTIONS AUTRES LE LOGICIEL.
     \end{tcolorbox}
 
-    API on Rails de \href{https://github.com/madeindjs/api_on_rails}{Alexandre Rousseau} est mis à disposition selon les termes de la licence \href{http://creativecommons.org/licenses/by-sa/4.0/}{Creative Commons Attribution - Partage dans les Mêmes Conditions 4.0 International}.
+    API on Rails de \href{https://github.com/madeindjs/api\_on\_rails}{Alexandre Rousseau} est mis à disposition selon les termes de la licence \href{http://creativecommons.org/licenses/by-sa/4.0/}{Creative Commons Attribution - Partage dans les Mêmes Conditions 4.0 International}.
     Fondé sur une œuvre à \url{http://apionrails.icalialabs.com/book/}.
 
 \chapter{Introduction}\label{chapter:1}
@@ -121,12 +121,10 @@
 
     Je vais utiliser de nombreux exemples en utilisant des ligne de commande. Je ne vais pas traiter avec Windows \verb|cmd| (désolé les gars). Je vais baser tous les exemples en utilisant l'invite de ligne de commande de style Unix. Voici un exemple:
 
-    \begin{scriptsize}
-    \begin{lstlisting}[language=bash]
-    $ echo "A command-line command"
+    \begin{bashcode}
+    echo "A command-line command"
     A command-line command
-    \end{lstlisting}
-    \end{scriptsize}
+    \end{bashcode}
 
     J'utiliserai quelques principes spécifiques à Ruby. C'est-à-dire:
 
@@ -200,28 +198,22 @@
       Nous utiliserons beaucoup Git et vous devriez aussi l'utiliser (non seulement pour le but de ce tutoriel mais pour tout vos projet).
 
       Installation de Git sous Mac OS:
-      \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ brew install git
-        \end{lstlisting}
-      \end{scriptsize}
+      \begin{bashcode}
+      \$ brew install git
+      \end{bashcode}
 
       Installation de Git sous Linux:
-      \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ sudo apt-get install git
-        \end{lstlisting}
-      \end{scriptsize}
+      \begin{bashcode}
+      \$ sudo apt-get install git
+      \end{bashcode}
 
     \subsection{Ruby}
 
       Il existe de nombreuses façons d'installer et de gérer Ruby. Vous devriez probablement déjà avoir une version installée sur votre système. Pour connaître votre version, tapez simplement:
 
-      \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ ruby -v
-        \end{lstlisting}
-      \end{scriptsize}
+      \begin{bashcode}
+      \$ ruby -v
+      \end{bashcode}
 
       Rails 5 nécessite l'installation de la version 2.2.2 ou supérieure. Pour l'installer, je vous recommande d'utiliser \href{http://rvm.io/}{Ruby Version Manager (RVM)} ou \href{http://rbenv.org/}{rbenv}. Ces outils vous permettrons d'installer plusieurs versions de \verb|ruby|. J'ai récemment changé de RVM à rbenv mais peu importe laquelle de ces deux options que vous utiliserez. Dans ce tutoriel, nous allons utiliser rbenv\footnote{Note pour Mac OS: si vous utilisez Mac, n'oubliez pas que vous devez avoir installé les \href{https://developer.apple.com/downloads/}{outils en ligne de commande pour Xcode}.}
 
@@ -229,20 +221,16 @@
 
         Pour commencer l'installation de Ruby, tapez:
 
-        \begin{scriptsize}
-          \begin{lstlisting}[language=bash]
-          $ rbenv install 2.1.2
-          \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ rbenv install 2.1.2
+        \end{bashcode}
 
         Ensuite, vous devez configurer la version de Ruby qui vient d'être installée comme version par défaut:
 
-        \begin{scriptsize}
-          \begin{lstlisting}[language=bash]
-          $ rbenv global 2.1.2
-          $ rbenv rehash
-          \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ rbenv global 2.1.2
+        \$ rbenv rehash
+        \end{bashcode}
 
         La commande \verb|rehash| est supposée s'exécuter à chaque fois que vous installez une nouvelle version de Ruby ou une Gemme. Pour plus d'informations sur la personnalisation ou d'autres types d'installation, consultez la \href{https://github.com/sstephenson/rbenv}{documentation du projet}.
 
@@ -250,33 +238,26 @@
 
         La première étape est de configurer quelques dépendances pour Ruby:
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ sudo apt-get update
-        $ sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev \
-                            libreadline-dev libyaml-dev libsqlite3-dev sqlite3 \
-                            libxml2-dev libxslt1-dev libcurl4-openssl-dev zlib1g-dev \
-                            python-software-properties
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ sudo apt-get update
+        \$ sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev zlib1g-dev python-software-properties
+        \end{bashcode}
 
         Ensuite, vous pouvez installer la dernière version de Ruby:
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ cd
-        $ git clone git://github.com/sstephenson/rbenv.git .rbenv
-        $ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
-        $ echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
+        \begin{bashcode}
+        \$ cd
+        \$ git clone git://github.com/sstephenson/rbenv.git .rbenv
+        \$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
+        \$ echo 'eval "\$(rbenv init -)"' >> ~/.bash_profile
 
-        $ git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
-        $ echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bash_profile
-        $ source ~/.bash_profile
+        \$ git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+        \$ echo 'export PATH="\$HOME/.rbenv/plugins/ruby-build/bin:\$PATH"' >> ~/.bash_profile
+        \$ source ~/.bash_profile
 
-        $ rbenv install 2.5.3
-        $ rbenv global 2.5.3
-        \end{lstlisting}
-        \end{scriptsize}
+        \$ rbenv install 2.5.3
+        \$ rbenv global 2.5.3
+        \end{bashcode}
 
         Si tout s'est bien passé, il est temps d'installer le reste des dépendances que nous allons utiliser.
 
@@ -284,57 +265,45 @@
 
         Tout d'abord, nous mettons à jour les Gemmes sur l'ensemble du système:
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ gem update --system
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ gem update --system
+        \end{bashcode}
 
         Dans la plupart des cas, si vous êtes sous Mac OS, vous devriez installer des bibliothèques supplémentaires:
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ brew install libtool libxslt libksba openssl
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ brew install libtool libxslt libksba openssl
+        \end{bashcode}
 
         Nous installons ensuite les gemmes nécessaires et ignorons la documentation pour chaque gemme:
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ printf 'gem: --no-document' >> ~/.gemrc
-        $ gem install bundler
-        $ gem install foreman
-        $ gem install rails -v 5.2
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ printf 'gem: --no-document' >> ~/.gemrc
+        \$ gem install bundler
+        \$ gem install foreman
+        \$ gem install rails -v 5.2
+        \end{bashcode}
 
         Vérifiez que tout fonctionne bien:
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ rails -v 5.2
+        \begin{bashcode}
+        \$ rails -v 5.2
         5.2.0
-        \end{lstlisting}
-        \end{scriptsize}
+        \end{bashcode}
 
       \subsubsection{Bases de données}
 
         Je vous recommande fortement d'installer \href{http://www.postgresql.org/}{Postgresql} pour gérer vos bases de données. Mais ici, plus de simplicité, nous allons utiliser \href{http://www.sqlite.org/}{SQlite}. Si vous utilisez Mac OS vous n'avez pas de bibliothèques supplémentaire à installer. Si vous êtes sous Linux, ne vous inquiétez pas, je vous guide:
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ sudo apt-get install libxslt-dev libxml2-dev libsqlite3-dev
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ sudo apt-get install libxslt-dev libxml2-dev libsqlite3-dev
+        \end{bashcode}
 
         ou
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ sudo yum install libxslt-devel libxml2-devel libsqlite3-devel
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ sudo yum install libxslt-devel libxml2-devel libsqlite3-devel
+        \end{bashcode}
 
   \section{Initialisation du projet}
 
@@ -342,13 +311,15 @@
 
     Sachez que nous utiliserons \href{http://rspec.info/}{Rspec} comme suite de test. Assurez-vous d'inclure l'option \verb|--skip-test| lors de la création de l'application\footnote{Nous utiliserons la libraire Rspec au lieu du framework de test pas défaut de Rails} et l'option \verb|--api|\footnote{L'otpion API est apparue lors de la version 5 de Rails. Elle permet de limiter les librairies et \textit{Middleware} inclue dans l'application. Cela permet aussi d'éviter de générer les vues HTML lors de l'utilisation des générateurs de Rails}.
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash, caption={Initialisation du projet Rails.}, label={lst:rails_new}]
-      $ mkdir ~/workspace
-      $ cd workspace
-      $ rails new market_place_api --skip-test --api
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{listing}
+      \caption{Initialisation du projet Rails.}
+      \label{lst:rails_new}
+      \begin{bashcode}
+      \$ mkdir ~/workspace
+      \$ cd workspace
+      \$ rails new market_place_api --skip-test --api
+      \end{bashcode}
+    \end{listing}
 
     Comme vous pouvez le deviner, les commandes ci-dessus (Listing \ref{lst:rails_new}) généreront les éléments indispensables à votre application Rails. La prochaine étape est d'ajouter quelques gemmes que nous utiliserons pour construire l'API.
 
@@ -360,29 +331,23 @@
 
         Pow ne fonctionne que sous Mac OS. Ne vous inquiétez pas, il existe une alternative qui imite les fonctionnalités sous Linux (Section \ref{subsubsect:prax}). Pour l'installer, tapez simplement:
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ curl get.pow.cx | sh
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ curl get.pow.cx | sh
+        \end{bashcode}
 
         Et c'est tout ce que vous avez à faire. Il suffit d'établir un lien symbolique avec l'application pour configurer l'application Rack.
 
         D'abord vous allez dans le répertoire \verb|~/.pow|:
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ cd ~/.pow
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ cd ~/.pow
+        \end{bashcode}
 
         Ensuite, vous pouvez créer le \href{http://en.wikipedia.org/wiki/Symbolic_link}{lien symbolique}
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ ln -s ~/workspace/market_place_api
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ ln -s ~/workspace/market_place_api
+        \end{bashcode}
 
         N'oubliez pas de changer le répertoire utilisateur pour celui qui correspond au votre. Vous pouvez maintenant accéder à l'application via \href{http://market_place_api.dev/}{http://market\_place\_api.dev}. Votre application devrait être en cours d'exécution comme celle illustrée à la Figure \ref{lst:rails_new}.
 
@@ -390,30 +355,24 @@
 
         Pour les utilisateurs de Linux uniquement, \href{https://github.com/ysbaddaden/prax.cr}{Prax} distribue des paquets déjà compilé pour les distributions Debian / Ubuntu. Il suffit donc de télécharger le paquet \verb|.deb| et de l'installer avec \verb|dpkg|.
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash, breaklines]
-        $ cd /tmp
-        $ wget https://github.com/ysbaddaden/prax.cr/releases/download/v0.8.0/prax_0.8.0-1_amd64.deb
-        $ sudo dpkg -i prax_0.8.0-1_amd64.deb
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ cd /tmp
+        \$ wget https://github.com/ysbaddaden/prax.cr/releases/download/v0.8.0/prax_0.8.0-1_amd64.deb
+        \$ sudo dpkg -i prax_0.8.0-1_amd64.deb
+        \end{bashcode}
 
         Ensuite, il ne nous reste plus qu'à lier les applications:
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ cd ~/workspace/market_place_api
-        $ prax link
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{bashcode}
+        \$ cd ~/workspace/market_place_api
+        \$ prax link
+        \end{bashcode}
 
         Si vous voulez démarrer le prax server automatiquement, ajoutez cette ligne au fichier \verb|.profile|:
 
-        \begin{scriptsize}
-        \begin{lstlisting}
+        \begin{bashcode}
         prax start
-        \end{lstlisting}
-        \end{scriptsize}
+        \end{bashcode}
 
         Lors de l'utilisation de \href{https://github.com/ysbaddaden/prax.cr}{Prax}, vous devez spécifier le port de l'URL, dans ce cas-ci: \href{http://market_place_api.dev:3000/}{http://market\_place\_api.dev:3000}:
 
@@ -427,34 +386,36 @@
 
         Une fois l'application Rails créée, l'étape suivante consiste à ajouter une Gem simple mais très puissante pour sérialiser les ressources que nous allons exposer sur l'API. La Gem s'appelle \verb|active_model_serializers|. C'est un excellent choix pour la construction de ce type d'application car la librairie est bien entretenu et la \href{https://github.com/rails-api/active_model_serializers}{documentation} est incroyable.
 
-        Votre \verb|Gemfile| devrait donc ressembler à ceci (Listing \ref{listing:gemfile_active _model_serializers}) après avoir ajouté la gemme \verb|active _model_serializers|:
+        Votre \verb|Gemfile| devrait donc ressembler à ceci (Listing \ref{lst:gemfile_active_model_serializers}) après avoir ajouté la gemme \verb|active_model_serializers|:
 
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=ruby, caption={Le Gemfile par défaut avec la Gem des sérialiseurs.}, label={listing:gemfile_active _model_serializers}, breaklines]
-        # Gemfile
-        source 'https://rubygems.org'
-        git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+        \begin{listing}
+          \caption{Le Gemfile par défaut avec la Gem des sérialiseurs.}
+          \label={lst:gemfile_active_model_serializers}
+          \begin{rubycode}
+          # Gemfile
+          source 'https://rubygems.org'
+          git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-        ruby '2.5.3'
+          ruby '2.5.3'
 
-        # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-        gem 'rails', '~> 5.2.0'
-        # Use sqlite3 as the database for Active Record
-        gem 'sqlite3'
-        # Use Puma as the app server
-        gem 'puma', '~> 3.11'
-        # Use SCSS for stylesheets
-        gem 'sass-rails', '~> 5.0'
-        # Use Uglifier as compressor for JavaScript assets
-        gem 'uglifier', '>= 1.3.0'
+          # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+          gem 'rails', '~> 5.2.0'
+          # Use sqlite3 as the database for Active Record
+          gem 'sqlite3'
+          # Use Puma as the app server
+          gem 'puma', '~> 3.11'
+          # Use SCSS for stylesheets
+          gem 'sass-rails', '~> 5.0'
+          # Use Uglifier as compressor for JavaScript assets
+          gem 'uglifier', '>= 1.3.0'
 
-        # Api gems
-        gem 'active_model_serializers'
+          # Api gems
+          gem 'active_model_serializers'
 
-        # ...
-        \end{lstlisting}
-        \end{scriptsize}
+          # ...
+          \end{rubycode}
+        \end{listing}
 
         Notez que j'enlève les gemmes \verb|jbuilder| et \verb|turbolinks| et \verb|coffee-rails| car nous n'allons pas les utiliser.
 
@@ -462,32 +423,32 @@
 
         Il est également important que vous mettiez à jour le Gemfile pour regrouper les différentes gemmes dans l'environnement correct (Listing \ref{lst:gemfile_active _group}) :
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=ruby, caption={Le Gemfile mis à jour pour différents groupes.}, label={lst:gemfile_active _group}]
-        # Gemfile
-        # ...
-        group :development do
-          gem 'sqlite3'
-        end
-        # ...
-        \end{lstlisting}
-        \end{scriptsize}
+        \begin{listing}
+          \caption{Le Gemfile mis à jour pour différents groupes.}
+          \label{lst:gemfile_active_group}
+          \begin{rubycode}
+          # Gemfile
+          # ...
+          group :development do
+            gem 'sqlite3'
+          end
+          # ...
+        \end{rubycode}
+      \end{listing}
 
-        Ceci, comme vous vous en souvenez peut-être, empêchera l'installation ou l'utilisation de sqlite lorsque vous déployez votre application chez un fournisseur de serveurs comme Heroku\footnote{En raison de la structure de l'application, nous n'allons déployer l'application sur aucun serveur, mais nous allons utiliser \href{http://pow.cx/}{Pow} de \href{https://basecamp.com/}{Basecamp}. Si vous utilisez Linux, il existe une solution similaire appelée \href{https://github.com/ysbaddaden/prax.cr}{Prax} par \href{https://github.com/ysbaddaden}{ysbaddaden}. Voir la section \ref{subsection:install_pow}}.
+      Ceci, comme vous vous en souvenez peut-être, empêchera l'installation ou l'utilisation de sqlite lorsque vous déployez votre application chez un fournisseur de serveurs comme Heroku\footnote{En raison de la structure de l'application, nous n'allons déployer l'application sur aucun serveur, mais nous allons utiliser \href{http://pow.cx/}{Pow} de \href{https://basecamp.com/}{Basecamp}. Si vous utilisez Linux, il existe une solution similaire appelée \href{https://github.com/ysbaddaden/prax.cr}{Prax} par \href{https://github.com/ysbaddaden}{ysbaddaden}. Voir la section \ref{subsection:install_pow}}.
 
-        \begin{displayquote}
-          Pow est un serveur Rack zéro-configuration pour Mac OS X. Servez vos applications localement en moins d'une minute. - \href{https://basecamp.com/}{Basecamp}
-        \end{displayquote}
+      \begin{displayquote}
+        Pow est un serveur Rack zéro-configuration pour Mac OS X. Servez vos applications localement en moins d'une minute. - \href{https://basecamp.com/}{Basecamp}
+      \end{displayquote}
 
-        Une fois cette configuration configurée, il est temps d'exécuter la commande d'installation du paquet pour intégrer les dépendances correspondantes:
+      Une fois cette configuration configurée, il est temps d'exécuter la commande d'installation du paquet pour intégrer les dépendances correspondantes:
 
-        \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ bundle install
-        \end{lstlisting}
-        \end{scriptsize}
+      \begin{bashcode}
+      \$ bundle install
+      \end{bashcode}
 
-        Une fois que la commande a terminé son exécution, il est temps de commencer à suivre le projet avec git (Section \ref{section:git})
+      Une fois que la commande a terminé son exécution, il est temps de commencer à suivre le projet avec git (Section \ref{section:git}).
 
   \section{Contrôle de version}\label{section:git}
 
@@ -495,62 +456,62 @@
 
     À ce stade, je suppose que vous avez déjà configuré git et que vous êtes prêt à l'utiliser pour suivre le projet. Si ce n'est pas votre cas, suivez les étapes de première installation (Listing \ref{lst:setup_git}):
 
-    \begin{scriptsize}
-    \begin{lstlisting}[language=bash, label={lst:setup_git}]
-    $ git config --global user.name "Type in your name"
-    $ git config --global user.email "Type in your email"
-    $ git config --global core.editor "vim"
-    \end{lstlisting}
-    \end{scriptsize}
+    \begin{listing}
+      \label{lst:setup_git}
+      \caption{Configuration de notre profil pour Git}
+      \begin{bashcode}
+      \$ git config --global user.name "Type in your name"
+      \$ git config --global user.email "Type in your email"
+      \$ git config --global core.editor "vim"
+      \end{bashcode}
+    \end{listing}
 
     Il est donc temps d'initier le projet avec Git. N'oubliez pas de naviguer dans le répertoire racine de l'application \verb|market_place_api|:
 
-    \begin{scriptsize}
-    \begin{lstlisting}[language=bash]
-    $ git init
+    \begin{bashcode}
+    \$ git init
     Initialized empty Git repository in ~/workspace/market_place_api/.git/
-    \end{lstlisting}
-    \end{scriptsize}
+    \end{bashcode}
 
-    L'étape suivante est d'ignorer certains fichiers que nous ne voulons pas suivre. Votre fichier \verb|.gitignore| devrait ressembler à celui montré ci-dessous (Listing \ref{lstlisting:gitignore}):
+    L'étape suivante est d'ignorer certains fichiers que nous ne voulons pas suivre. Votre fichier \verb|.gitignore| devrait ressembler à celui montré ci-dessous (Listing \ref{lst:gitignore}):
 
-    \begin{scriptsize}
-    \begin{lstlisting}[breaklines, caption={La version modifiée du fichier .gitignore}, label={lstlisting:gitignore}]
-    # Ignore bundler config.
-    /.bundle
+    \begin{listing}
+      \caption{La version modifiée du fichier .gitignore}
+      \label{lst:gitignore}
+      \begin{bashcode}
+      # Ignore bundler config.
+      /.bundle
 
-    # Ignore the default SQLite database.
-    /db/*.sqlite3
-    /db/*.sqlite3-journal
+      # Ignore the default SQLite database.
+      /db/*.sqlite3
+      /db/*.sqlite3-journal
 
-    # Ignore all logfiles and tempfiles.
-    /log/*
-    /tmp/*
-    !/log/.keep
-    !/tmp/.keep
+      # Ignore all logfiles and tempfiles.
+      /log/*
+      /tmp/*
+      !/log/.keep
+      !/tmp/.keep
 
-    # Ignore uploaded files in development
-    /storage/*
+      # Ignore uploaded files in development
+      /storage/*
 
-    /node_modules
-    /yarn-error.log
+      /node_modules
+      /yarn-error.log
 
-    /public/assets
-    .byebug_history
+      /public/assets
+      .byebug_history
 
-    # Ignore master key for decrypting credentials and more.
-    /config/master.key
-    \end{lstlisting}
-    \end{scriptsize}
+      # Ignore master key for decrypting credentials and more.
+      /config/master.key
+      \end{bashcode}
+    \end{listing}
 
     Après avoir modifié le fichier \verb|.gitignore|, il suffit d'ajouter les fichiers et de valider les modifications. Les commandes nécessaires sont indiquées ci-dessous:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ git add .
-      $ git commit -m "Initial commit"
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    \$ git add .
+    \$ git commit -m "Initial commit"
+    \end{bashcode}
 
     Bonne pratique : J'ai appris que commencer un message par un verbe au présent décrit ce que fait le commit et non ce qu'il a fait. De cette façon il est plus facile de lire et de comprendre l’historique du projet (ou du moins pour moi). Je vais suivre cette pratique jusqu'à la fin du tutoriel.
 
@@ -558,19 +519,15 @@
 
     On ajoute d'abord le serveur distant:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ git remote add origin git@github.com:madeindjs/market_place_api.git
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    \$ git remote add origin git@github.com:madeindjs/market_place_api.git
+    \end{bashcode}
 
     ensuite:
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ git push -u origin master
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    \$ git push -u origin master
+    \end{bashcode}
 
     Au fur et à mesure que nous avançons dans le tutoriel, j'utiliserai les pratiques que j'utilise quotidiennement. Cela inclut le travail avec les branches, le rebasage, le squash et bien d'autres. Vous n'avez pas à vous inquiéter si vous ne connaissez pas tous ces termes: Je les expliquerai le temps venu.
 
@@ -584,15 +541,13 @@
 
   Vous pouvez cloner le projet jusqu'ici avec :
 
-  \begin{scriptsize}
-    \begin{lstlisting}[language=bash]
-    $ git clone https://github.com/madeindjs/market_place_api
-    $ cd market_place_api
-    $ git checkout -b chapter1 b98a9a7a328017640482af95beebc1d6e612e0ac
-    \end{lstlisting}
-  \end{scriptsize}
+  \begin{bashcode}
+  \$ git clone https://github.com/madeindjs/market_place_api
+  \$ cd market_place_api
+  \$ git checkout -b chapter1 b98a9a7a328017640482af95beebc1d6e612e0ac
+  \end{bashcode}
 
-  Pour résumer, nous avons mis à jour le Gemfile pour ajouter la Gem \verb|active_model_serializers| (Listing \ref{listing:gemfile_active _model_serializers}).
+  Pour résumer, nous avons mis à jour le Gemfile pour ajouter la Gem \verb|active_model_serializers| (Listing \ref{lst:gemfile_active_model_serializers}).
 
   \section{Planification de l'application}
 
@@ -621,19 +576,23 @@
 
     C'est pourquoi une norme existe: REST \textit{(Representational State Transfer)}. REST impose une norme pour les routes qui crée, lise, mette à jour ou supprime des informations sur un serveur en utilisant de simples appels HTTP. C'est une alternative aux mécanismes plus complexes comme SOAP(Listing \ref{lst:soap_example}), CORBA et RPC. Un appel REST est simplement une requête GET HTTP vers le serveur.
 
-    \begin{scriptsize}
-      \begin{lstlisting}[label={lst:soap_example}, caption={Un exemple d'appel SOAP}]
+    \begin{listing}
+      \label{lst:soap_example}
+      \caption{Un exemple d'appel SOAP}
+      \begin{rubycode}
       aService.getUser("1")
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
+    \end{listing}
 
     Et avec REST, vous pouvez appeler une URL avec une requête HTTP spécifique. Dans ce cas avec une requête GET (Listing \ref{lst:rest_example}):
 
-    \begin{scriptsize}
-    \begin{lstlisting}[label={lst:rest_example}, caption={Un exemple d'appel REST}]
-    http://domain.com/resources_name/uri_pattern
-    \end{lstlisting}
-    \end{scriptsize}
+    \begin{listing}
+      \label{lst:rest_example}
+      \caption{Un exemple d'appel REST}
+      \begin{bashcode}
+      http://domain.com/resources_name/uri_pattern
+      \end{bashcode}
+    \end{listing}
 
     Les API RESTful doivent suivre aux minimum trois règles:
 
@@ -664,45 +623,47 @@
 
       Commençons donc par ouvrir le terminal dans le répertoire \verb|market_place_api| et tapez la commande suivante pour créer la branche:
 
-      \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ git checkout -b setting-api
-        Switched to a new branch 'setting-api'
-        \end{lstlisting}
-      \end{scriptsize}
+      \begin{bashcode}
+      \$ git checkout -b setting-api
+      Switched to a new branch 'setting-api'
+      \end{bashcode}
 
       Nous allons seulement travailler sur le fichier \verb|config/routes.rb| (Listing \ref{lst:default_routes}), car nous allons simplement définir les contraintes et le format de réponse par défaut pour chaque requête.
 
-      \begin{scriptsize}
-        \begin{lstlisting}[language=ruby, caption={Le fichier routes.rb par défault}, label={lst:default_routes}]
+      \begin{listing}
+        \caption{Le fichier routes.rb par défault}
+        \label{lst:default_routes}
+        \begin{rubycode}[language=ruby]
         # config/routes.rb
         Rails.application.routes.draw do
           # ...
         end
-        \end{lstlisting}
-      \end{scriptsize}
+        \end{rubycode}
+      \end{listing}
 
       Effacez tout le code commenté qui se trouve dans le fichier. Nous n'en aurons pas besoin. Ensuite, faites un \verb|commit|, juste pour s'échauffer:
 
-      \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ git add config/routes.rb
-        $ git commit -m "Removes comments from the routes file"
-        \end{lstlisting}
-      \end{scriptsize}
+      \begin{bashcode}
+      \$ git add config/routes.rb
+      \$ git commit -m "Removes comments from the routes file"
+      \end{bashcode}
 
       Nous allons isoler les contrôleurs API dans des \verb|Namespace|. Avec Rails, c'est assez simple. Il suffit de créer un dossier sous \verb|app/controllers| nommé \verb|api|. Le nom est important car c'est le \verb|Namespace| que nous allons utiliser pour gérer les contrôleurs pour les points d'entrée de l'API (Listing \ref{lst:mkdir_controllers_api})
 
-      \begin{scriptsize}
-      \begin{lstlisting}[language=bash, caption={Commande pour créer le dossier controllers/api}, label={lst:mkdir_controllers_api}]
-      $ mkdir app/controllers/api
-      \end{lstlisting}
-      \end{scriptsize}
+      \begin{listing}
+        \caption{Commande pour créer le dossier controllers/api}
+        \label{lst:mkdir_controllers_api}
+        \begin{bashcode}[language=bash, ]
+        \$ mkdir app/controllers/api
+        \end{bashcode}
+      \end{listing}
 
       Nous ajoutons ensuite ce \verb|Namespace| dans notre fichier \verb|routes.rb| (Listing \ref{lst:routes_create_namespace}):
 
-      \begin{scriptsize}
-        \begin{lstlisting}[language=ruby, caption={Création d'un Namespace}, label={lst:routes_create_namespace}]
+      \begin{listing}
+        \caption{Création d'un Namespace}
+        \label{lst:routes_create_namespace}
+        \begin{rubycode}
         # config/routes.rb
         Rails.application.routes.draw do
           # Api definition
@@ -710,26 +671,30 @@
             # We are going to list our resources here
           end
         end
-        \end{lstlisting}
-      \end{scriptsize}
+        \end{rubycode}
+      \end{listing}
+
 
       En définissant un \verb|Namespace| dans le fichier \verb|routes.rb|, Rails mappera automatiquement ce \verb|Namespace| à un répertoire correspondant au nom sous le dossier controllers (dans notre cas le répertoire \verb|api/|).
 
       Rails supporte jusqu'à 35 types de médias différents, vous pouvez les lister en accédant à la classe \verb|SET| sous le module de \verb|Mime|:
 
-      \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ rails c
+      \begin{listing}
+        \caption{Liste des types de média disponnibles}
+        \begin{bashcode}
+        \$ rails c
         Loading development environment (Rails 5.2.1)
         irb(main):001:0> Mime::SET.collect(&:to_s)
         => ["text/html", "text/plain", "text/javascript", "text/css", "text/calendar", "text/csv", "text/vcard", "text/vtt", "image/png", "image/jpeg", "image/gif", "image/bmp", "image/tiff", "image/svg+xml", "video/mpeg", "audio/mpeg", "audio/ogg", "audio/aac", "video/webm", "video/mp4", "font/otf", "font/ttf", "font/woff", "font/woff2", "application/xml", "application/rss+xml", "application/atom+xml", "application/x-yaml", "multipart/form-data", "application/x-www-form-urlencoded", "application/json", "application/pdf", "application/zip", "application/gzip", "application/vnd.web-console.v2"]
-        \end{lstlisting}
-      \end{scriptsize}
+        \end{bashcode}
+      \end{listing}
 
       C'est important parce que nous allons travailler avec JSON, l'un des types MIME intégrés par Rails. Ainsi nous avons juste besoin de spécifier ce format comme format par défaut (Listing \ref{lst:routes_create_namespace_with_format}) :
 
-      \begin{scriptsize}
-        \begin{lstlisting}[language=ruby, caption={Création d'un Namespace avec un format par défault}, label={lst:routes_create_namespace_with_format}]
+      \begin{listing}
+        \caption{Création d'un Namespace avec un format par défault}
+        \label{lst:routes_create_namespace_with_format}
+        \begin{rubycode}[language=ruby, ]
         # config/routes.rb
         Rails.application.routes.draw do
           # Api definition
@@ -737,13 +702,15 @@
             # We are going to list our resources here
           end
         end
-        \end{lstlisting}
-      \end{scriptsize}
+        \end{rubycode}
+      \end{listing}
 
       Jusqu'à présent, nous n'avons rien fait de compliqué. Nous voulons maintenant générer une \verb|base_uri| sous un sous-domaine. C'est-à-dire quelque chose comme \verb|api.market_place_api.dev|. Définir l'API sous un sous-domaine est une bonne pratique car cela permet d'adapter l'application à un niveau DNS. Alors, comment y parvenir? (Listing \ref{lst:routes_create_namespace_with_subdomain})
 
-      \begin{scriptsize}
-        \begin{lstlisting}[language=ruby, caption={Création d'un Namespace avec un format par défault}, label={lst:routes_create_namespace_with_subdomain}]
+      \begin{listing}
+        \caption{Création d'un Namespace avec un format par défault}
+        \label{lst:routes_create_namespace_with_subdomain}
+        \begin{rubycode}
         # config/routes.rb
         Rails.application.routes.draw do
           # Api definition
@@ -751,8 +718,8 @@
             # We are going to list our resources here
           end
         end
-        \end{lstlisting}
-      \end{scriptsize}
+        \end{rubycode}
+      \end{listing}
 
       Vous voyez la différence? Nous n'avons pas seulement ajouté un \verb|Hash| de contraintes pour spécifier le sous-domaine, nous avons aussi ajouté l'option chemin d'accès et lui avons donné un \textit{backslash}. Cel indique à Rails que le chemin de départ pour chaque requête est la racine par rapport au sous-domaine (Encadré \ref{box:setup_api}).
 
@@ -771,19 +738,16 @@
 
       Il est temps de \textit{commiter}:
 
-      \begin{scriptsize}
-        \begin{lstlisting}[language=bash]
-        $ git add config/routes.rb
-        $ git commit -m "Set the routes contraints for the api"
-        \end{lstlisting}
-      \end{scriptsize}
+      \begin{bashcode}
+      \$ git add config/routes.rb
+      \$ git commit -m "Set the routes contraints for the api"
+      \end{bashcode}
 
   \section{Versionnement de l'API}\label{section:api_versioning}
 
     A ce stade, nous devrions avoir un bon mappage des routes utilisant un sous-domaine pour l'espacement des noms des requêtes. Votre fichier \verb|routes.rb| devrait ressembler à ceci:
 
-    \begin{scriptsize}
-    \begin{lstlisting}[language=ruby]
+    \begin{rubycode}
     # config/routes.rb
     Rails.application.routes.draw do
       # Api definition
@@ -791,23 +755,22 @@
         # We are going to list our resources here
       end
     end
-    \end{lstlisting}
-    \end{scriptsize}
+    \end{rubycode}
 
     Il est maintenant temps de mettre en place d'autres contraintes pour le \textit{versioning}. Vous devriez vous soucier de versionner votre application dès le début car cela donnera une meilleure structure à votre API. Lorsque des changements interviendrons sur votre API, vous pouvez ainsi proposer aux développeurs de s'adapter aux nouvelles fonctionnalités pendant que les anciennes sont dépréciées\footnote{Il y a un excellent \href{http://railscasts.com/episodes/350-rest-api-versioning}{railscast} qui explique cela}.
 
     Afin de définir la version de l'API, nous devons d'abord ajouter un autre répertoire sous le dossier \verb|api/| que nous avons créé (Section \ref{section:setup_api}):
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=bash]
-      $ mkdir app/controllers/api/v1
-      \end{lstlisting}
-    \end{scriptsize}
+    \begin{bashcode}
+    \$ mkdir app/controllers/api/v1
+    \end{bashcode}
 
     De cette façon, nous pouvons très facilement définir la portée de notre API dans différentes versions. Il ne nous reste plus qu'à ajouter le code nécessaire dans le fichier \verb|routes.rb| (Listing \ref{lst:add_scope_to_toutes})
 
-    \begin{scriptsize}
-      \begin{lstlisting}[language=ruby, caption={Spécification de la version de l'API}, label={lst:add_scope_to_toutes}]
+    \begin{listing}
+      \caption{Spécification de la version de l'API}
+      \label{lst:add_scope_to_toutes}
+      \begin{rubycode}[language=ruby, ]
       # config/routes.rb
       Rails.application.routes.draw do
         # Api definition
@@ -817,8 +780,8 @@
           end
         end
       end
-      \end{lstlisting}
-    \end{scriptsize}
+      \end{rubycode}
+    \end{listing}
 
     L'API est désormais \textit{scopée} via l'URL. Par exemple, avec la configuration actuelle, la récupération d'un produit via l'API se ferait avec cette url:
 
@@ -6702,60 +6665,68 @@
       }
       \end{jsoncode}
 
-      Maintenant que nous avons la structure finale de la balise meta, il ne nous reste plus qu'à la sortir sur la réponse JSON. Ajoutons d'abord quelques tests:
+      Maintenant que nous avons la structure finale de la balise meta, il ne nous reste plus qu'à la sortir sur la réponse JSON. Ajoutons d'abord quelques tests (Listing \ref{lst:meta_products_controller_spec})
 
-      \begin{rubycode}
-      # spec/controllers/api/v1/products_controller_spec.rb
-      require 'rails_helper'
+      \begin{listing}
+        \caption{Ajout de tests pour vérifier l'ajout des balises meta sur la sortie JSON}
+        \label{lst:meta_products_controller_spec}
+        \begin{rubycode}
+        # spec/controllers/api/v1/products_controller_spec.rb
+        require 'rails_helper'
 
-      RSpec.describe Api::V1::ProductsController, type: :controller do
-        # ...
+        RSpec.describe Api::V1::ProductsController, type: :controller do
+          # ...
 
-        describe 'GET #index' do
-          before(:each) do
-            4.times { FactoryBot.create :product }
-            get :index
+          describe 'GET #index' do
+            before(:each) do
+              4.times { FactoryBot.create :product }
+              get :index
+            end
+
+            # ...
+
+            it 'Have a meta pagination tag' do
+              expect(json_response).to have_key(:meta)
+              expect(json_response[:meta]).to have_key(:pagination)
+              expect(json_response[:meta][:pagination]).to have_key(:per_page)
+              expect(json_response[:meta][:pagination]).to have_key(:total_pages)
+              expect(json_response[:meta][:pagination]).to have_key(:total_objects)
+            end
+
+            it { expect(response.response_code).to eq(200) }
           end
 
           # ...
-
-          it 'Have a meta pagination tag' do
-            expect(json_response).to have_key(:meta)
-            expect(json_response[:meta]).to have_key(:pagination)
-            expect(json_response[:meta][:pagination]).to have_key(:per_page)
-            expect(json_response[:meta][:pagination]).to have_key(:total_pages)
-            expect(json_response[:meta][:pagination]).to have_key(:total_objects)
-          end
-
-          it { expect(response.response_code).to eq(200) }
         end
+        \end{rubycode}
+      \end{listing}
 
-        # ...
-      end
-      \end{rubycode}
+      Le test que nous venons d'ajouter devrait échouer (Listing \ref{lst:meta_spec_regression}) or, si nous executons les tests, deux tests échouent. Cela veux dire que nous avons cassé quelque chose d'autre:
 
-      Le test que nous venons d'ajouter devrait échouer or, si nous executons les tests, deux tests échouent. Cela veux dire que nous avons cassé quelque chose d'autre:
+      \begin{listing}
+        \caption{Nous voyons que nous venons de provoquer une régréssion car deux tests échouent}
+        \label{lst:meta_spec_regression}
+        \begin{bashcode}
+        bundle exec rspec spec/controllers/api/v1/products_controller_spec.rb
+        ...F....F...........
 
-      \begin{bashcode}
-      bundle exec rspec spec/controllers/api/v1/products_controller_spec.rb
-      ...F....F...........
+        Failures:
 
-      Failures:
+          1) Api::V1::ProductsController GET #index Have a meta pagination tag
+             ...
 
-        1) Api::V1::ProductsController GET #index Have a meta pagination tag
-           ...
+          2) Api::V1::ProductsController GET #index when product_ids parameter is sent returns just the products that belong to the user
+             Failure/Error: total_pages: products.total_pages,
 
-        2) Api::V1::ProductsController GET #index when product_ids parameter is sent returns just the products that belong to the user
-           Failure/Error: total_pages: products.total_pages,
+             NoMethodError:
+               undefined method `total_pages' for #<Array:0x0000556f1ef85c68>
+             # ./app/controllers/api/v1/products_controller.rb:12:in `index'
+             ...
 
-           NoMethodError:
-             undefined method `total_pages' for #<Array:0x0000556f1ef85c68>
-           # ./app/controllers/api/v1/products_controller.rb:12:in `index'
-           ...
-
-      Finished in 0.40801 seconds (files took 0.62979 seconds to load)
-      20 examples, 2 failures
-      \end{bashcode}
+        Finished in 0.40801 seconds (files took 0.62979 seconds to load)
+        20 examples, 2 failures
+        \end{bashcode}
+      \end{listing}
 
       L'erreur est en fait sur la méthode \verb|Product.search|. En fait, Kaminari attend une relation d'enregistrement au lieu d'un tableau. C'est très facile à réparer:
 
